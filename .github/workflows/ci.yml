@@ -1,0 +1,27 @@
+name: Simple HTML Check
+
+# Robot kab chalega?
+on:
+  push:
+    branches: [ "main" ]
+
+# Robot kya karega?
+jobs:
+  check-files:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Code uthao
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Check karo
+      - name: Check Index File
+        run: |
+          ls -la
+          if [ -f index.html ]; then
+            echo "File Mil Gayi! ✅"
+          else
+            echo "File Nahi Mili! ❌"
+            exit 1
+          fi
