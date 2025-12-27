@@ -1,27 +1,35 @@
-name: Simple HTML Check
+name: Deploy to Live Website 🚀
 
-# Robot kab chalega?
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
-# Robot kya karega?
+# GitHub ko permission do ki wo website file write kar sake
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
-  check-files:
+  # Job 1: Check & Build
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      # Step 1: Code uthao
+      # 1. Code Download
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Check karo
-      - name: Check Index File
-        run: |
-          ls -la
-          if [ -f index.html ]; then
-            echo "File Mil Gayi! ✅"
-          else
-            echo "File Nahi Mili! ❌"
-            exit 1
-          fi
+      # 2. Setup Pages (GitHub ka tool)
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      # 3. Upload Artifact (Code ko pack karke server pe upload)
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: '.'
+
+      # 4. Deploy (Live kar do)
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
