@@ -4,32 +4,37 @@ on:
   push:
     branches: ["main"]
 
-# GitHub ko permission do ki wo website file write kar sake
+# Permissions dena zaroori hai
 permissions:
   contents: read
   pages: write
   id-token: write
 
 jobs:
-  # Job 1: Check & Build
-  build-and-deploy:
+  deploy:
+    # Ye environment batata hai ki hum GitHub Pages use kar rahe hain
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
     runs-on: ubuntu-latest
+    
     steps:
-      # 1. Code Download
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      # Step 1: Code Checkout (Updated to v4)
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # 2. Setup Pages (GitHub ka tool)
+      # Step 2: Setup Pages (Updated to v5)
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v5
 
-      # 3. Upload Artifact (Code ko pack karke server pe upload)
-      - name: Upload Artifact
-        uses: actions/upload-pages-artifact@v2
+      # Step 3: Upload Artifact (Updated to v3 - Ye error de raha tha pehle)
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
 
-      # 4. Deploy (Live kar do)
+      # Step 4: Deploy (Updated to v4)
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
