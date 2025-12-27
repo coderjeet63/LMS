@@ -1,40 +1,30 @@
-name: Deploy to Live Website 🚀
+name: Build & Push Docker Image 🐳
 
 on:
   push:
-    branches: ["main"]
-
-# Permissions dena zaroori hai
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    branches: [ "main" ]
 
 jobs:
-  deploy:
-    # Ye environment batata hai ki hum GitHub Pages use kar rahe hain
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    
+  build-and-push:
     runs-on: ubuntu-latest
-    
+
     steps:
-      # Step 1: Code Checkout (Updated to v4)
-      - name: Checkout
-        uses: actions/checkout@v4
+    # 1. Code Download
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-      # Step 2: Setup Pages (Updated to v5)
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+    # 2. Docker Hub mein Login karo (Chabi use karke)
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 3: Upload Artifact (Updated to v3 - Ye error de raha tha pehle)
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.'
-
-      # Step 4: Deploy (Updated to v4)
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    # 3. Image Banao aur Push karo
+    - name: Build and Push
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        # Niche wali line dhyan se change karna: 'username/repo-name:tag'
+        tags: ${{ secrets.DOCKER_USERNAME }}/lms-backend:latest
